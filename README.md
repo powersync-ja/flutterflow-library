@@ -10,7 +10,7 @@ The exported source code is released on the [`flutterflow`](https://github.com/p
 
 ## Useful references
 
-- The [documentation on PowerSync and FlutterFlow]([FlutterFlow](https://docs.powersync.com/integration-guides/flutterflow-+-powersync)).
+- The [documentation on PowerSync and FlutterFlow](https://docs.powersync.com/integration-guides/flutterflow-+-powersync).
 - [PowerSync on the FlutterFlow marketplace](https://marketplace.flutterflow.io/item/dm1cuOwYzDv6yQL2QOFb).
 - [Discussion on the FlutterFlow community forums](https://community.flutterflow.io/discussions/post/offline-first-supabase-vs-firebase-firestore-lM9ET0JcT4KG2E0).
 -  [![Discord](https://img.shields.io/discord/1138230179878154300?style=social&logo=discord&logoColor=%235865f2&label=Join%20Discord%20server)](https://discord.gg/powersync)
