@@ -27,6 +27,10 @@ ps.PowerSyncDatabase get db =>
         'Tried to access PowerSync database without calling initializePowerSync() action!'));
 
 Future<void> initializePowerSync() async {
+  await getOrInitializeDatabase();
+}
+
+Future<ps.PowerSyncDatabase> _initializePowerSyncInternal() async {
   final values = FFLibraryValues();
   final schema =
       _convertJsonToSchema(convert.jsonDecode(values.PowerSyncSchema));
@@ -96,6 +100,8 @@ Future<void> initializePowerSync() async {
       currentConnector?.prefetchCredentials();
     }
   });
+
+  return db;
 }
 
 const _isCompilingToWeb = bool.fromEnvironment('dart.library.js_interop');
@@ -265,7 +271,7 @@ Future<ps.PowerSyncDatabase> getOrInitializeDatabase() {
     return Future.value(db);
   }
 
-  return _initializingDb ??= initializePowerSync().then((_) => db);
+  return _initializingDb ??= _initializePowerSyncInternal();
 }
 
 Future<String> _getDatabasePath() async {
