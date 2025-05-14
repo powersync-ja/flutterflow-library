@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_getters_setters
 
-import '/backend/schema/util/schema_util.dart';
 
 import 'index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -15,6 +14,9 @@ class SyncStatusStruct extends BaseStruct {
     String? downloadError,
     String? uploadError,
     bool? uploading,
+
+    /// If downloading, information about how far the download has progressed.
+    SyncProgressStruct? downloadProgress,
   })  : _connected = connected,
         _connecting = connecting,
         _hasSynced = hasSynced,
@@ -22,7 +24,8 @@ class SyncStatusStruct extends BaseStruct {
         _lastSyncedAt = lastSyncedAt,
         _downloadError = downloadError,
         _uploadError = uploadError,
-        _uploading = uploading;
+        _uploading = uploading,
+        _downloadProgress = downloadProgress;
 
   // "connected" field.
   bool? _connected;
@@ -80,6 +83,18 @@ class SyncStatusStruct extends BaseStruct {
 
   bool hasUploading() => _uploading != null;
 
+  // "downloadProgress" field.
+  SyncProgressStruct? _downloadProgress;
+  SyncProgressStruct get downloadProgress =>
+      _downloadProgress ?? SyncProgressStruct();
+  set downloadProgress(SyncProgressStruct? val) => _downloadProgress = val;
+
+  void updateDownloadProgress(Function(SyncProgressStruct) updateFn) {
+    updateFn(_downloadProgress ??= SyncProgressStruct());
+  }
+
+  bool hasDownloadProgress() => _downloadProgress != null;
+
   static SyncStatusStruct fromMap(Map<String, dynamic> data) =>
       SyncStatusStruct(
         connected: data['connected'] as bool?,
@@ -90,6 +105,9 @@ class SyncStatusStruct extends BaseStruct {
         downloadError: data['downloadError'] as String?,
         uploadError: data['uploadError'] as String?,
         uploading: data['uploading'] as bool?,
+        downloadProgress: data['downloadProgress'] is SyncProgressStruct
+            ? data['downloadProgress']
+            : SyncProgressStruct.maybeFromMap(data['downloadProgress']),
       );
 
   static SyncStatusStruct? maybeFromMap(dynamic data) => data is Map
@@ -105,6 +123,7 @@ class SyncStatusStruct extends BaseStruct {
         'downloadError': _downloadError,
         'uploadError': _uploadError,
         'uploading': _uploading,
+        'downloadProgress': _downloadProgress?.toMap(),
       }.withoutNulls;
 
   @override
@@ -140,6 +159,10 @@ class SyncStatusStruct extends BaseStruct {
         'uploading': serializeParam(
           _uploading,
           ParamType.bool,
+        ),
+        'downloadProgress': serializeParam(
+          _downloadProgress,
+          ParamType.DataStruct,
         ),
       }.withoutNulls;
 
@@ -185,6 +208,12 @@ class SyncStatusStruct extends BaseStruct {
           ParamType.bool,
           false,
         ),
+        downloadProgress: deserializeStructParam(
+          data['downloadProgress'],
+          ParamType.DataStruct,
+          false,
+          structBuilder: SyncProgressStruct.fromSerializableMap,
+        ),
       );
 
   @override
@@ -200,7 +229,8 @@ class SyncStatusStruct extends BaseStruct {
         lastSyncedAt == other.lastSyncedAt &&
         downloadError == other.downloadError &&
         uploadError == other.uploadError &&
-        uploading == other.uploading;
+        uploading == other.uploading &&
+        downloadProgress == other.downloadProgress;
   }
 
   @override
@@ -212,7 +242,8 @@ class SyncStatusStruct extends BaseStruct {
         lastSyncedAt,
         downloadError,
         uploadError,
-        uploading
+        uploading,
+        downloadProgress
       ]);
 }
 
@@ -225,6 +256,7 @@ SyncStatusStruct createSyncStatusStruct({
   String? downloadError,
   String? uploadError,
   bool? uploading,
+  SyncProgressStruct? downloadProgress,
 }) =>
     SyncStatusStruct(
       connected: connected,
@@ -235,4 +267,5 @@ SyncStatusStruct createSyncStatusStruct({
       downloadError: downloadError,
       uploadError: uploadError,
       uploading: uploading,
+      downloadProgress: downloadProgress ?? SyncProgressStruct(),
     );

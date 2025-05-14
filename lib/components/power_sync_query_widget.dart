@@ -1,4 +1,3 @@
-import '';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
@@ -77,9 +76,11 @@ class _PowerSyncQueryWidgetState extends State<PowerSyncQueryWidget> {
           ),
         ),
         Builder(builder: (_) {
-          return widget.child!(
-            _model.rows,
-          );
+          return widget.child != null
+              ? widget.child!(
+                  _model.rows,
+                )
+              : SizedBox.shrink();
         }),
       ],
     );

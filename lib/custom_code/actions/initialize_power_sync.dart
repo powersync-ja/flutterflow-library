@@ -20,6 +20,7 @@ import 'package:path_provider/path_provider.dart' as p;
 ps.PowerSyncDatabase? _db;
 StreamSubscription? _statusSubscription;
 Future<ps.PowerSyncDatabase>? _initializingDb;
+PowerSyncCustomization powerSyncOptions = PowerSyncCustomization();
 
 ps.PowerSyncDatabase get db =>
     _db ??
@@ -70,6 +71,14 @@ Future<ps.PowerSyncDatabase> _initializePowerSyncInternal() async {
         uploading: status.uploading,
         downloadError: status.downloadError?.toString(),
         uploadError: status.uploadError?.toString(),
+        downloadProgress: switch (status.downloadProgress) {
+          null => null,
+          final progress => SyncProgressStruct(
+              downloadedFraction: progress.downloadedFraction,
+              downloadedOperations: progress.downloadedOperations,
+              totalOperations: progress.totalOperations,
+            )
+        },
       );
     });
   });
@@ -219,9 +228,14 @@ final class _SupabaseConnector extends ps.PowerSyncBackendConnector {
         if (op.op == ps.UpdateType.put) {
           var data = Map<String, dynamic>.of(op.opData!);
           data['id'] = op.id;
+          powerSyncOptions.transformData(op.table, data);
+
           await table.upsert(data);
         } else if (op.op == ps.UpdateType.patch) {
-          await table.update(op.opData!).eq('id', op.id);
+          var data = Map<String, dynamic>.of(op.opData!);
+          powerSyncOptions.transformData(op.table, data);
+
+          await table.update(data).eq('id', op.id);
         } else if (op.op == ps.UpdateType.delete) {
           await table.delete().eq('id', op.id);
         }
@@ -264,6 +278,18 @@ final class _SupabaseConnector extends ps.PowerSyncBackendConnector {
     return supabase.Supabase.instance.client.auth.currentSession?.accessToken !=
         null;
   }
+}
+
+/// Options that can be used to customize how the PowerSync integration for
+/// FlutterFlow behaves.
+final class PowerSyncCustomization {
+  void Function(String table, Map<String, Object?> data) transformData;
+
+  PowerSyncCustomization({
+    this.transformData = _noTransformation,
+  });
+
+  static void _noTransformation(String table, Map<String, Object?> data) {}
 }
 
 Future<ps.PowerSyncDatabase> getOrInitializeDatabase() {
